@@ -96,13 +96,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				}
 			} else if(count($pictures)) {
 			?>
-				<p><?php echo $pictures[0]->album_name; ?></p>
-				<p><a href="<?php echo base_url() ?>index.php/delete/album/<?php echo $pictures[0]->album_title; ?>/">Delete Album</a></p>
+				<p><?php echo $album_name; ?></p>
+				<p><a href="<?php echo base_url() ?>index.php/delete/album/<?php echo $album_title; ?>/">Delete Album</a></p>
 
 			<?php
-				if($pictures[0]->album_title != 'profile_pictures') {
+				if($album_title != 'profile_pictures') {
 				?>
-					<p><a href="<?php echo base_url(); ?>index.php/profile/addpicture/<?php echo $pictures[0]->album_title; ?>">Add pictures</a></p>
+					<p><a href="<?php echo base_url(); ?>index.php/profile/addpicture/<?php echo $album_title; ?>">Add pictures</a></p>
 				<?php
 				}
 				foreach($pictures as $picture) {

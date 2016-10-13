@@ -4,13 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Register extends CI_Controller {
 	public function index()
 	{
-		$this->load->helper(array('form', 'url'));
-
-		$this->load->database();
-
-        $this->load->library(array('form_validation','session', 'email'));
-
-        $this->load->model('user_model');
+        $this->load->library('email');
 
 		$config = array(
 			array(
@@ -95,7 +89,7 @@ class Register extends CI_Controller {
 					'hash' => $hash
 				);
 
-				$this->db->insert('activation', $activationData);
+				$this->activation_model->insert($activationData);
 
 				$this->email->from('anonymouspr41@gmail.com', 'Codeigniter Tutorial Team');
 				$this->email->to($data['email']);

@@ -2,20 +2,10 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Profile extends CI_Controller {
-	public function __construct() {
-		parent::__construct();
-
-		$this->load->helper(array('form', 'url'));
-
-		$this->load->library(array('form_validation', 'session'));
-
-		$this->load->database();
-	}
-
 	public function albums($username, $title = null) {
 		if(isset($title)) {
-			$this->db->where('title', $title);
-			if(!count($this->db->get('albums')->result())) {
+			$album = $this->pictures_model->get_album_by_title($title);
+			if(!count($album)) {
 				redirect(base_url());
 			}
 		}
@@ -26,19 +16,18 @@ class Profile extends CI_Controller {
 			$data['edit'] = array('allowed' => false);
 		}
 
-		$this->db->where('username', $username);
-		$user = $this->db->get('users')->result();
+		$user = $this->user_model->get_users('username', $username);
 
 		if(count($user)) {
-			$this->db->where('user_id', $user[0]->id);
 			$data['username'] = $username;
 
 			if(!isset($title)) {
-				$data['albums'] = $this->db->get('albums')->result();
+				$data['albums'] = $this->pictures_model->get_album($user[0]->id);
 				$data['pictures'] = array();				
 			} else {
-				$this->db->where('album_title', $title);
-				$data['pictures'] = $this->db->get('pictures')->result();
+				$data['pictures'] = $this->pictures_model->get_picture($album[0]->id);
+				$data['album_title'] = $album[0]->title;
+				$data['album_name'] = $album[0]->name;
 				$data['albums'] = array();
 			}
 

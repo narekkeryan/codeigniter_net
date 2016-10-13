@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class message_model extends CI_Model {
-	function get_messages($user_id, $other_id) {
+	public function get_messages($user_id, $other_id) {
 		$this->db->where('user_id', $user_id);
 		$this->db->where('deleted', 0);
 		$this->db->where("(from_id='".$other_id."' OR to_id='".$other_id."')", NULL, FALSE);
@@ -9,7 +9,7 @@ class message_model extends CI_Model {
 		return $this->db->get('messages')->result();
 	}
 
-	function get_msg($id, $unseen = FALSE) {
+	public function get_msg($id, $unseen = FALSE) {
 		if($unseen == FALSE) {
 			$this->db->where('id', $id);
 
@@ -22,11 +22,11 @@ class message_model extends CI_Model {
 		}
 	}
 
-	function insert($data) {
+	public function insert($data) {
 		return $this->db->insert('messages', $data);
 	}
 
-	function delete($id) {
+	public function delete($id) {
 		$this->db->set('deleted', TRUE);
 		$this->db->where('id', $id);
 		return $this->db->update('messages');

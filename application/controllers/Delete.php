@@ -5,11 +5,7 @@ class Delete extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 
-		$this->load->helper(array('url', 'file'));
-
-		$this->load->database();
-
-		$this->load->library('session');
+		$this->load->helper(array('file'));
 	}
 
 	public function album($title = null) {
@@ -21,22 +17,23 @@ class Delete extends CI_Controller {
 			redirect(base_url());
 		}
 
-		$this->db->where('user_id', $this->session->userdata('user_id'));
-		$this->db->where('album_title', $title);
-		$pictures = $this->db->get('pictures')->result();
+		$albums = $this->pictures_model->get_album($this->session->userdata('user_id'), $title);
+		if(!count($albums)) {
+			redirect(base_url());
+		} else {
+			$album_id = $albums[0]->id;
+		}
+
+		$pictures = $this->pictures_model->get_picture($albums[0]->id);
 
 		if(count($pictures)) {
 			foreach($pictures as $picture) {
 				delete_files('./uploads/' . $this->session->userdata('username') . '/' . $title . '/');
 			}
 
-			$this->db->where('user_id', $this->session->userdata('user_id'));
-			$this->db->where('title', $title);
-			$this->db->delete('albums');
+			$this->pictures_model->delete_album($this->session->userdata('user_id'), $title);
 
-			$this->db->where('user_id', $this->session->userdata('user_id'));
-			$this->db->where('album_title', $title);
-			$this->db->delete('pictures');
+			$this->pictures_model->delete_picture($album_id);
 		}
 
 		rmdir('./uploads/' . $this->session->userdata('username') . '/' . $title . '/');
@@ -53,16 +50,12 @@ class Delete extends CI_Controller {
 			redirect(base_url());
 		}
 
-		$this->db->where('user_id', $this->session->userdata('user_id'));
-		$this->db->where('id', $id);
-		$picture = $this->db->get('pictures')->result();
+		$picture = $this->pictures_model->get_picture_by_id($id, $this->session->userdata('user_id'));
 
 		if(count($picture)) {
-			delete_files($picture[0]->path);
+			delete_files('../../../.' . $picture[0]->path);
 			
-			$this->db->where('user_id', $this->session->userdata('user_id'));
-			$this->db->where('id', $id);
-			$this->db->delete('pictures');
+			$this->pictures_model->delete_picture_by_id($id, $this->session->userdata('user_id'));
 		}
 
 		redirect(base_url('index.php/profile/albums/' . $this->session->userdata('username') . '/'));

@@ -1,15 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class user_model extends CI_Model {
-	function __construct() {
-		parent::__construct();
-	}
-
-	function insert_user($data) {
+	public function insert_user($data) {
 		return $this->db->insert('users', $data);
 	}
 
-	function get_user($username, $password) {
+	public function get_user($username, $password) {
 		$this->db->where('username', $username);
 		$this->db->where('password', md5(hash('sha256', $password)));
 
@@ -17,10 +13,17 @@ class user_model extends CI_Model {
 		return $query->result();
 	}
 
-	function get_users($where_1, $where_2) {
+	public function get_users($where_1, $where_2) {
 		$this->db->where($where_1,$where_2);
 		
 		return $this->db->get('users')->result();
+	}
+
+	public function update_status($username, $status) {
+		$this->db->set('status', $status);
+		$this->db->where('username', $username);
+
+		return $this->db->update('users');
 	}
 }
 
